@@ -32,11 +32,12 @@ class HomeController extends Controller
         ->take(20)
         ->get()
         ->map(fn ($movie) => [
-            'movie_name' => $movie->movie_name,
-            'director' => $movie->director,
-            'movie_thumbnail' => $movie->movie_thumbnail
-                ? Storage::url($movie->movie_thumbnail)
-                : null,
+          'id' => $movie->id,
+          'movie_name' => $movie->movie_name,
+          'director' => $movie->director,
+          'movie_thumbnail' => $movie->movie_thumbnail
+              ? Storage::url($movie->movie_thumbnail)
+              : null,
         ])
         ->values();
 

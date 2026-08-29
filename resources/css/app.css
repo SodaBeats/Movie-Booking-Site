@@ -180,12 +180,19 @@
 }
 
 .movie-card {
+    position: relative;
     flex: 0 0 200px;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(51, 65, 85, 0.8);
     border-radius: 1rem;
     overflow: hidden;
     box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    will-change: transform;
+}
+
+.movie-card:hover .movie-thumbnail {
+    transform: scale(1.06);
+    filter: blur(0.4px) brightness(1.08);
 }
 
 .movie-thumbnail {
@@ -194,6 +201,8 @@
     height: 290px;
     object-fit: cover;
     background: #0f172a;
+    transform-origin: center;
+    will-change: transform, filter;
 }
 
 .movie-card-body {

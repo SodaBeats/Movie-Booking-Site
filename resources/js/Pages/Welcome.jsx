@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
@@ -168,7 +168,8 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
               {movie_list.map((movie, index) => (
                 <article
                   key={`${movie.movie_name}-${index}`}
-                  className="movie-card transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-red-500/60 hover:shadow-[0_24px_48px_rgba(239,68,68,0.15)]"
+                  className="movie-card group cursor-pointer transition duration-300 ease-out"
+                  onClick={() => router.visit(`/movies/${movie.id}`)}
                 >
                   <img
                     src={
@@ -176,9 +177,9 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
                       "https://placehold.co/300x450/0f172a/f8fafc?text=Movie"
                     }
                     alt={movie.movie_name}
-                    className="movie-thumbnail transition duration-300 ease-out group-hover:brightness-110"
+                    className="movie-thumbnail transition duration-500 ease-out group-hover:scale-[1.06] group-hover:brightness-110 group-hover:blur-[0.4px]"
                   />
-                  <div className="movie-card-body">
+                  <div className="movie-card-body hover:text-orange-500">
                     <h3>{movie.movie_name}</h3>
                   </div>
                 </article>
