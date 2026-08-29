@@ -1,3 +1,171 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hero-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    min-height: 520px;
+    background: #020617;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.45);
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 34rem;
+    padding: 4rem 3rem;
+}
+
+.hero-kicker {
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.25rem;
+    text-transform: uppercase;
+    color: rgba(248, 113, 113, 0.95);
+}
+
+.hero-content h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 0.95;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+    color: white;
+}
+
+.hero-meta {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(226, 232, 240, 0.9);
+}
+
+.hero-description {
+    margin-top: 1rem;
+    max-width: 30rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.hero-primary,
+.hero-secondary,
+.control-button,
+.dot {
+    transition: all 0.2s ease;
+}
+
+.hero-primary,
+.hero-secondary {
+    border-radius: 9999px;
+    padding: 0.9rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.hero-primary {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+.hero-primary:hover {
+    background: #dc2626;
+}
+
+.hero-secondary {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    color: white;
+}
+
+.hero-secondary:hover {
+    border-color: rgba(248, 113, 113, 0.8);
+    color: #fecaca;
+}
+
+.hero-controls {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 2;
+}
+
+.control-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.5);
+    color: white;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.control-button:hover {
+    border-color: rgba(248, 113, 113, 0.8);
+    color: #fecaca;
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border: none;
+    border-radius: 9999px;
+    background: rgba(148, 163, 184, 0.5);
+}
+
+.dot.active {
+    background: #f87171;
+    transform: scale(1.2);
+}
+
+.hero-empty-state {
+    display: flex;
+    min-height: 520px;
+    align-items: center;
+    justify-content: center;
+    color: rgba(226, 232, 240, 0.8);
+    background: linear-gradient(90deg, rgba(2,6,23,0.8), rgba(15,23,42,0.7));
+}
