@@ -48,4 +48,23 @@ class HomeController extends Controller
           'movie_list' => $movieList,
       ]);
   }
+
+  public function show($id)
+  {
+      $movie = Movie::query()->findOrFail($id);
+
+      return Inertia::render('MoviePage', [
+          'canLogin' => Route::has('login'),
+          'canRegister' => Route::has('register'),
+          'movie' => [
+              'id' => $movie->id,
+              'movie_name' => $movie->movie_name,
+              'director' => $movie->director,
+              'description' => $movie->description,
+              'movie_thumbnail' => $movie->movie_thumbnail
+                  ? Storage::url($movie->movie_thumbnail)
+                  : null,
+          ],
+      ]);
+  }
 }
