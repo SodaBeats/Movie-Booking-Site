@@ -5,6 +5,15 @@ import Navbar from "@/Components/Navbar";
 export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const handleBookNow = (movieId) => {
+    if (!auth?.user) {
+      router.visit(route("login"));
+      return;
+    }
+
+    router.visit(`/movies/${movieId}`);
+  };
+
   useEffect(() => {
     if (movie_posters.length < 2) return;
 
@@ -19,7 +28,7 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
 
   return (
     <>
-      <Head title="Welcome" />
+      <Head title="Movie Booking" />
 
       <div className="min-h-screen bg-slate-950 text-white">
         <Navbar Link={Link} auth={auth} />
@@ -43,7 +52,11 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
                       <p className="hero-meta">Directed by {movie.director}</p>
                       <p className="hero-description">{movie.description}</p>
                       <div className="hero-actions">
-                        <button type="button" className="hero-primary">
+                        <button
+                          type="button"
+                          className="hero-primary"
+                          onClick={() => handleBookNow(movie.id)}
+                        >
                           Book now
                         </button>
                         <button type="button" className="hero-secondary">

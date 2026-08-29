@@ -30,4 +30,15 @@ class MoviePageTest extends TestCase
         $this->assertStringContainsString('mt-6 max-w-5xl', $moviePageSource);
         $this->assertStringNotContainsString('py-5', $navbarSource);
     }
+
+    public function test_movie_page_book_now_redirects_guests_to_login(): void
+    {
+        $moviePageSource = file_get_contents(resource_path('js/Pages/MoviePage.jsx'));
+        $welcomePageSource = file_get_contents(resource_path('js/Pages/Welcome.jsx'));
+
+        $this->assertStringContainsString('route("login")', $moviePageSource);
+        $this->assertStringContainsString('route("login")', $welcomePageSource);
+        $this->assertStringContainsString('!auth?.user', $moviePageSource);
+        $this->assertStringContainsString('!auth?.user', $welcomePageSource);
+    }
 }

@@ -6,6 +6,13 @@ export default function MoviePage({ movie, auth }) {
     movie?.movie_thumbnail ||
     "https://placehold.co/500x700/0f172a/f8fafc?text=Movie";
 
+  const handleBookNow = () => {
+    if (!auth?.user) {
+      window.location.href = route("login");
+      return;
+    }
+  };
+
   return (
     <>
       <Head
@@ -50,6 +57,7 @@ export default function MoviePage({ movie, auth }) {
                 <button
                   type="button"
                   className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-500"
+                  onClick={handleBookNow}
                 >
                   Book now
                 </button>
