@@ -1,34 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Models\Movie;
+use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    $moviePosters = Movie::query()
-        ->oldest('id')
-        ->take(5)
-        ->get()
-        ->map(fn ($movie) => [
-            'id' => $movie->id,
-            'movie_name' => $movie->movie_name,
-            'director' => $movie->director,
-            'description' => $movie->description,
-            'movie_poster' => $movie->movie_poster
-                ? Storage::url($movie->movie_poster)
-                : null,
-        ])
-        ->values();
-
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'movie_posters' => $moviePosters,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

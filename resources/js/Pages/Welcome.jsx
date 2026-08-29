@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Welcome({ auth, movie_posters = [] }) {
+export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -155,6 +155,36 @@ export default function Welcome({ auth, movie_posters = [] }) {
               </div>
             </section>
           )}
+
+          <section className="mt-12">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">Now showing</h2>
+              <span className="text-sm text-slate-400">
+                {movie_list.length} titles
+              </span>
+            </div>
+
+            <div className="movie-list">
+              {movie_list.map((movie, index) => (
+                <article
+                  key={`${movie.movie_name}-${index}`}
+                  className="movie-card transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-red-500/60 hover:shadow-[0_24px_48px_rgba(239,68,68,0.15)]"
+                >
+                  <img
+                    src={
+                      movie.movie_thumbnail ||
+                      "https://placehold.co/300x450/0f172a/f8fafc?text=Movie"
+                    }
+                    alt={movie.movie_name}
+                    className="movie-thumbnail transition duration-300 ease-out group-hover:brightness-110"
+                  />
+                  <div className="movie-card-body">
+                    <h3>{movie.movie_name}</h3>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         </main>
       </div>
     </>

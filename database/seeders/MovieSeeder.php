@@ -18,7 +18,7 @@ class MovieSeeder extends Seeder
             'movie_name' => 'Inception',
             'director' => 'Christopher Nolan',
             'description' => 'A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.',
-            'movie_thumbnail' => 'thumbnails/moviethumbnail.jpg',
+            'movie_thumbnail' => 'thumbnails/moviethumbnail.png',
             'movie_poster' => 'posters/movieposter.png',
         ]);
 
@@ -26,7 +26,7 @@ class MovieSeeder extends Seeder
             'movie_name' => 'The Grand Budapest Hotel',
             'director' => 'Wes Anderson',
             'description' => 'The adventures of a legendary concierge at a famous European hotel between the wars.',
-            'movie_thumbnail' => 'thumbnails/moviethumbnail.jpg',
+            'movie_thumbnail' => 'thumbnails/moviethumbnail.png',
             'movie_poster' => 'posters/movieposter.png',
         ]);
 
@@ -34,7 +34,7 @@ class MovieSeeder extends Seeder
             'movie_name' => 'Into the Woods',
             'director' => 'Ben Stiller',
             'description' => 'A movie about strange happenings in the woods.',
-            'movie_thumbnail' => 'thumbnails/moviethumbnail.jpg',
+            'movie_thumbnail' => 'thumbnails/moviethumbnail.png',
             'movie_poster' => 'posters/movieposter.png',
         ]);
 
@@ -42,7 +42,7 @@ class MovieSeeder extends Seeder
             'movie_name' => 'Resident Evil: Veronica',
             'director' => 'Leon Kennedy',
             'description' => 'Zombies, badassery, and a lot of action.',
-            'movie_thumbnail' => 'thumbnails/moviethumbnail.jpg',
+            'movie_thumbnail' => 'thumbnails/moviethumbnail.png',
             'movie_poster' => 'posters/movieposter.png',
         ]);
 
@@ -50,7 +50,7 @@ class MovieSeeder extends Seeder
             'movie_name' => 'The Men Who Stare at Goats',
             'director' => 'Mr. Bean',
             'description' => 'Some weird things about goats.',
-            'movie_thumbnail' => 'thumbnails/moviethumbnail.jpg',
+            'movie_thumbnail' => 'thumbnails/moviethumbnail.png',
             'movie_poster' => 'posters/movieposter.png',
         ]);
     }
