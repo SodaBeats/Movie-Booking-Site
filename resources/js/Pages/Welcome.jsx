@@ -166,22 +166,15 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
           <section className="mt-12">
             <div className="mb-5 flex items-center justify-between gap-4">
               <h2 className="text-2xl font-bold text-white">Now showing</h2>
-              <span className="text-sm text-slate-400">
-                {movie_list.length} titles
+              <span>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search by title or director"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-red-500"
+                />
               </span>
-            </div>
-
-            <div className="mb-6">
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Search movies
-              </label>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search by title or director"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-red-500"
-              />
             </div>
 
             {movie_list.length === 0 ? (
