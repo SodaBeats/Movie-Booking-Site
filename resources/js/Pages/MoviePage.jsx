@@ -1,16 +1,95 @@
 import Navbar from "@/Components/Navbar";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
+import { useEffect, useMemo, useState } from "react";
 
-export default function MoviePage({ movie, auth }) {
+export default function MoviePage({ movie, auth, showtimes = [] }) {
   const poster =
     movie?.movie_thumbnail ||
     "https://placehold.co/500x700/0f172a/f8fafc?text=Movie";
+
+  const availableDates = useMemo(
+    () => [...new Set(showtimes.map((showtime) => showtime.show_date))],
+    [showtimes],
+  );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(availableDates[0] ?? "");
+  const [selectedShowtimeId, setSelectedShowtimeId] = useState(
+    showtimes.find((showtime) => showtime.show_date === availableDates[0])
+      ?.id ?? "",
+  );
+  const [seatCount, setSeatCount] = useState(1);
+
+  useEffect(() => {
+    if (!availableDates.length) {
+      setSelectedDate("");
+      setSelectedShowtimeId("");
+      return;
+    }
+
+    if (!selectedDate || !availableDates.includes(selectedDate)) {
+      setSelectedDate(availableDates[0]);
+    }
+  }, [availableDates, selectedDate]);
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setSelectedShowtimeId("");
+      return;
+    }
+
+    const firstSlotForDate = showtimes.find(
+      (showtime) => showtime.show_date === selectedDate,
+    );
+
+    if (firstSlotForDate) {
+      setSelectedShowtimeId((current) =>
+        current &&
+        showtimes.some(
+          (showtime) =>
+            showtime.id === current && showtime.show_date === selectedDate,
+        )
+          ? current
+          : firstSlotForDate.id,
+      );
+    }
+  }, [selectedDate, showtimes]);
+
+  const slotsForSelectedDate = showtimes.filter(
+    (showtime) => showtime.show_date === selectedDate,
+  );
 
   const handleBookNow = () => {
     if (!auth?.user) {
       window.location.href = route("login");
       return;
     }
+
+    setIsModalOpen(true);
+  };
+
+  const handleSubmitBooking = (event) => {
+    event.preventDefault();
+
+    if (!selectedShowtimeId || !movie?.id) {
+      return;
+    }
+
+    router.post(
+      route("bookings.store"),
+      {
+        movie_id: movie.id,
+        showtime_id: selectedShowtimeId,
+        seat_count: Number(seatCount),
+      },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsModalOpen(false);
+          setSeatCount(1);
+        },
+      },
+    );
   };
 
   return (
@@ -66,6 +145,95 @@ export default function MoviePage({ movie, auth }) {
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 px-4">
+          <div className="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-black/50">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">
+                Book {movie?.movie_name || "this movie"}
+              </h2>
+              <button
+                type="button"
+                className="text-sm text-slate-400 hover:text-white"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            {availableDates.length === 0 ? (
+              <p className="text-slate-300">
+                No showtimes are available for this movie right now.
+              </p>
+            ) : (
+              <form className="space-y-5" onSubmit={handleSubmitBooking}>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-200">
+                    Date
+                  </label>
+                  <select
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none ring-0 focus:border-red-500"
+                  >
+                    {availableDates.map((date) => (
+                      <option key={date} value={date}>
+                        {date}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-200">
+                    Time slot
+                  </label>
+                  <select
+                    value={selectedShowtimeId}
+                    onChange={(event) =>
+                      setSelectedShowtimeId(event.target.value)
+                    }
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none ring-0 focus:border-red-500"
+                  >
+                    {slotsForSelectedDate.length > 0 ? (
+                      slotsForSelectedDate.map((showtime) => (
+                        <option key={showtime.id} value={showtime.id}>
+                          {showtime.show_time}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">No slots available</option>
+                    )}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-200">
+                    Seats
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={seatCount}
+                    onChange={(event) => setSeatCount(event.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none ring-0 focus:border-red-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={!selectedShowtimeId}
+                  className="w-full rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-slate-700"
+                >
+                  Confirm booking
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

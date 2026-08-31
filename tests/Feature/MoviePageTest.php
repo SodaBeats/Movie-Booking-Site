@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Movie;
+use App\Models\Showtime;
+use App\Models\User;
 use Database\Seeders\MovieSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -40,5 +43,36 @@ class MoviePageTest extends TestCase
         $this->assertStringContainsString('route("login")', $welcomePageSource);
         $this->assertStringContainsString('!auth?.user', $moviePageSource);
         $this->assertStringContainsString('!auth?.user', $welcomePageSource);
+    }
+
+    public function test_authenticated_user_can_create_booking_for_selected_showtime(): void
+    {
+        $movie = Movie::create([
+            'movie_name' => 'Test Movie',
+            'director' => 'Test Director',
+            'description' => 'A test description.',
+            'movie_thumbnail' => null,
+        ]);
+        $showtime = Showtime::create([
+            'movie_id' => $movie->id,
+            'show_date' => '2026-09-01',
+            'show_time' => '18:30',
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post('/bookings', [
+                'movie_id' => $movie->id,
+                'showtime_id' => $showtime->id,
+                'seat_count' => 2,
+            ])
+            ->assertRedirect('/movies/' . $movie->id);
+
+        $this->assertDatabaseHas('bookings', [
+            'user_id' => $user->id,
+            'movie_id' => $movie->id,
+            'showtime_id' => $showtime->id,
+            'seat_count' => 2,
+        ]);
     }
 }

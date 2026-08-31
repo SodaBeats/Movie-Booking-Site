@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
@@ -8,6 +9,7 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/movies/{id}', [HomeController::class, 'show'])->name('movies.show');
+Route::middleware('auth')->post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
 /*Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

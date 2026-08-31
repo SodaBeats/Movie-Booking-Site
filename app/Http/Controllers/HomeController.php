@@ -53,6 +53,18 @@ class HomeController extends Controller
   {
       $movie = Movie::query()->findOrFail($id);
 
+      $showtimes = $movie->showtimes()
+          ->orderBy('show_date')
+          ->orderBy('show_time')
+          ->get()
+          ->map(fn ($showtime) => [
+              'id' => $showtime->id,
+              'movie_id' => $showtime->movie_id,
+              'show_date' => $showtime->show_date,
+              'show_time' => $showtime->show_time,
+          ])
+          ->values();
+
       return Inertia::render('MoviePage', [
           'canLogin' => Route::has('login'),
           'canRegister' => Route::has('register'),
@@ -65,6 +77,7 @@ class HomeController extends Controller
                   ? Storage::url($movie->movie_thumbnail)
                   : null,
           ],
+          'showtimes' => $showtimes,
       ]);
   }
 }
