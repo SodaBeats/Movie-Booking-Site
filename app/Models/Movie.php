@@ -14,4 +14,9 @@ class Movie extends Model
       'movie_thumbnail',
       'movie_poster',
   ];
+  
+  public function bookings()
+  {
+      return $this->hasMany(Booking::class);
+  }
 }
