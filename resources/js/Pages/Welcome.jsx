@@ -132,6 +132,7 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
                 <button
                   type="button"
                   className="rounded-full border border-slate-700 px-4 py-2 text-sm font-medium text-white hover:border-red-500 hover:text-red-400"
+                  onClick={() => router.visit(`/movies/${activeMovie.id}`)}
                 >
                   Explore
                 </button>
