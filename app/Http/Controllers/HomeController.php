@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
       $moviePosters = Movie::query()
         ->oldest('id')
@@ -27,8 +27,17 @@ class HomeController extends Controller
         ])
         ->values();
 
-      $movieList = Movie::query()
-        ->oldest('id')
+      $search = trim((string) $request->query('q', ''));
+      $movieListQuery = Movie::query()->oldest('id');
+
+      if ($search !== '') {
+          $movieListQuery->where(function ($query) use ($search) {
+              $query->where('movie_name', 'like', "%{$search}%")
+                  ->orWhere('director', 'like', "%{$search}%");
+          });
+      }
+
+      $movieList = $movieListQuery
         ->take(20)
         ->get()
         ->map(fn ($movie) => [

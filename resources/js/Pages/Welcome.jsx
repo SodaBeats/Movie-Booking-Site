@@ -4,6 +4,13 @@ import Navbar from "@/Components/Navbar";
 
 export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return new URLSearchParams(window.location.search).get("q") || "";
+  });
 
   const handleBookNow = (movieId) => {
     if (!auth?.user) {
@@ -23,6 +30,22 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
 
     return () => clearInterval(interval);
   }, [movie_posters.length]);
+
+  useEffect(() => {
+    const trimmedQuery = searchQuery.trim();
+
+    const timeoutId = setTimeout(() => {
+      const params = trimmedQuery ? { q: trimmedQuery } : {};
+
+      router.get(route("home"), params, {
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+      });
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const activeMovie = movie_posters[activeIndex] ?? null;
 
@@ -141,34 +164,54 @@ export default function Welcome({ auth, movie_posters = [], movie_list = [] }) {
           )}
 
           <section className="mt-12">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between gap-4">
               <h2 className="text-2xl font-bold text-white">Now showing</h2>
               <span className="text-sm text-slate-400">
                 {movie_list.length} titles
               </span>
             </div>
 
-            <div className="movie-list">
-              {movie_list.map((movie, index) => (
-                <article
-                  key={`${movie.movie_name}-${index}`}
-                  className="movie-card group cursor-pointer transition duration-300 ease-out"
-                  onClick={() => router.visit(`/movies/${movie.id}`)}
-                >
-                  <img
-                    src={
-                      movie.movie_thumbnail ||
-                      "https://placehold.co/300x450/0f172a/f8fafc?text=Movie"
-                    }
-                    alt={movie.movie_name}
-                    className="movie-thumbnail transition duration-500 ease-out group-hover:scale-[1.06] group-hover:brightness-110 group-hover:blur-[0.4px]"
-                  />
-                  <div className="movie-card-body hover:text-orange-500">
-                    <h3>{movie.movie_name}</h3>
-                  </div>
-                </article>
-              ))}
+            <div className="mb-6">
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Search movies
+              </label>
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search by title or director"
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-red-500"
+              />
             </div>
+
+            {movie_list.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center text-slate-300">
+                No movies match “{searchQuery.trim() || "your search"}”. Try a
+                different title or director.
+              </div>
+            ) : (
+              <div className="movie-list">
+                {movie_list.map((movie, index) => (
+                  <article
+                    key={`${movie.movie_name}-${index}`}
+                    className="movie-card group cursor-pointer transition duration-300 ease-out"
+                    onClick={() => router.visit(`/movies/${movie.id}`)}
+                  >
+                    <img
+                      src={
+                        movie.movie_thumbnail ||
+                        "https://placehold.co/300x450/0f172a/f8fafc?text=Movie"
+                      }
+                      alt={movie.movie_name}
+                      className="movie-thumbnail transition duration-500 ease-out group-hover:scale-[1.06] group-hover:brightness-110 group-hover:blur-[0.4px]"
+                    />
+                    <div className="movie-card-body hover:text-orange-500">
+                      <h3>{movie.movie_name}</h3>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
         </main>
       </div>

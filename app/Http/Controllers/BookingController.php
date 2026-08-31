@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Movie;
 use App\Models\Showtime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 
 class BookingController extends Controller
@@ -33,6 +35,10 @@ class BookingController extends Controller
             'showtime_id' => $showtime->id,
             'seat_count' => $validated['seat_count'],
         ]);
+
+        $booking->load(['user', 'movie', 'showtime']);
+
+        Mail::to($booking->user->email)->queue(new BookingConfirmation($booking));
 
         return Redirect::route('movies.show', ['id' => $movie->id])->with('success', 'Booking created successfully.');
     }
