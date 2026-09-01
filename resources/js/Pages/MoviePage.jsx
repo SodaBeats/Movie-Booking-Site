@@ -13,6 +13,7 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState(availableDates[0] ?? "");
   const [selectedShowtimeId, setSelectedShowtimeId] = useState(
     showtimes.find((showtime) => showtime.show_date === availableDates[0])
@@ -71,9 +72,11 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
   const handleSubmitBooking = (event) => {
     event.preventDefault();
 
-    if (!selectedShowtimeId || !movie?.id) {
+    if (!selectedShowtimeId || !movie?.id || isSubmitting) {
       return;
     }
+
+    setIsSubmitting(true);
 
     router.post(
       route("bookings.store"),
@@ -85,8 +88,12 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
       {
         preserveScroll: true,
         onSuccess: () => {
+          setIsSubmitting(false);
           setIsModalOpen(false);
           setSeatCount(1);
+        },
+        onError: () => {
+          setIsSubmitting(false);
         },
       },
     );
@@ -224,10 +231,10 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
 
                 <button
                   type="submit"
-                  disabled={!selectedShowtimeId}
+                  disabled={isSubmitting || !selectedShowtimeId}
                   className="w-full rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-slate-700"
                 >
-                  Confirm booking
+                  {isSubmitting ? "Processing..." : "Confirm booking"}
                 </button>
               </form>
             )}

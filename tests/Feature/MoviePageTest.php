@@ -45,6 +45,16 @@ class MoviePageTest extends TestCase
         $this->assertStringContainsString('!auth?.user', $welcomePageSource);
     }
 
+    public function test_movie_page_tracks_booking_submit_state_and_disables_button(): void
+    {
+        $pageSource = file_get_contents(resource_path('js/Pages/MoviePage.jsx'));
+
+        $this->assertStringContainsString('const [isSubmitting, setIsSubmitting] = useState(false);', $pageSource);
+        $this->assertStringContainsString('setIsSubmitting(true);', $pageSource);
+        $this->assertStringContainsString('setIsSubmitting(false);', $pageSource);
+        $this->assertStringContainsString('disabled={isSubmitting || !selectedShowtimeId}', $pageSource);
+    }
+
     public function test_authenticated_user_can_create_booking_for_selected_showtime(): void
     {
         $movie = Movie::create([
