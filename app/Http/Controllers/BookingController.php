@@ -6,18 +6,31 @@ use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Movie;
 use App\Models\Showtime;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class BookingController extends Controller
 {
     public function store(Request $request)
     {
+        $duplicateBookingMessage = 'You have already booked this showtime.';
+
         $validated = $request->validate([
             'movie_id' => ['required', 'integer', 'exists:movies,id'],
-            'showtime_id' => ['required', 'integer', 'exists:showtimes,id'],
+            'showtime_id' => [
+                'required',
+                'integer',
+                'exists:showtimes,id',
+                Rule::unique('bookings')->where(fn ($query) =>
+                    $query->where('user_id', $request->user()->id)
+                ),
+            ],
             'seat_count' => ['required', 'integer', 'min:1', 'max:20'],
+        ], [
+            'showtime_id.unique' => $duplicateBookingMessage,
         ]);
 
         $movie = Movie::findOrFail($validated['movie_id']);
@@ -29,12 +42,18 @@ class BookingController extends Controller
             ])->withInput();
         }
 
-        $booking = Booking::create([
-            'user_id' => $request->user()->id,
-            'movie_id' => $movie->id,
-            'showtime_id' => $showtime->id,
-            'seat_count' => $validated['seat_count'],
-        ]);
+        try {
+            $booking = Booking::create([
+                'user_id' => $request->user()->id,
+                'movie_id' => $movie->id,
+                'showtime_id' => $showtime->id,
+                'seat_count' => $validated['seat_count'],
+            ]);
+        } catch (QueryException $e) {
+            return back()->withErrors([
+                'showtime_id' => $duplicateBookingMessage,
+            ])->withInput();
+        }
 
         $booking->load(['user', 'movie', 'showtime']);
 

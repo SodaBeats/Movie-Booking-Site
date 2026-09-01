@@ -85,4 +85,12 @@ class MoviePageTest extends TestCase
             'seat_count' => 2,
         ]);
     }
+
+    public function test_movie_page_displays_duplicate_booking_error_message(): void
+    {
+        $pageSource = file_get_contents(resource_path('js/Pages/MoviePage.jsx'));
+
+        $this->assertStringContainsString('showtime_id', $pageSource);
+        $this->assertStringContainsString('You have already booked this showtime.', $pageSource);
+    }
 }

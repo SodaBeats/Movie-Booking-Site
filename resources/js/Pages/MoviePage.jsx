@@ -14,6 +14,7 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedDate, setSelectedDate] = useState(availableDates[0] ?? "");
   const [selectedShowtimeId, setSelectedShowtimeId] = useState(
     showtimes.find((showtime) => showtime.show_date === availableDates[0])
@@ -66,6 +67,7 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
       return;
     }
 
+    setErrorMessage("");
     setIsModalOpen(true);
   };
 
@@ -77,6 +79,7 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
     }
 
     setIsSubmitting(true);
+    setErrorMessage("");
 
     router.post(
       route("bookings.store"),
@@ -91,9 +94,14 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
           setIsSubmitting(false);
           setIsModalOpen(false);
           setSeatCount(1);
+          setErrorMessage("");
         },
-        onError: () => {
+        onError: (errors) => {
           setIsSubmitting(false);
+          setErrorMessage(
+            errors?.showtime_id ||
+              "You have already booked this showtime.",
+          );
         },
       },
     );
@@ -163,11 +171,20 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
               <button
                 type="button"
                 className="text-sm text-slate-400 hover:text-white"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setErrorMessage("");
+                }}
               >
                 Close
               </button>
             </div>
+
+            {errorMessage && (
+              <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                {errorMessage}
+              </div>
+            )}
 
             {availableDates.length === 0 ? (
               <p className="text-slate-300">
@@ -181,7 +198,10 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
                   </label>
                   <select
                     value={selectedDate}
-                    onChange={(event) => setSelectedDate(event.target.value)}
+                    onChange={(event) => {
+                      setSelectedDate(event.target.value);
+                      setErrorMessage("");
+                    }}
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none ring-0 focus:border-red-500"
                   >
                     {availableDates.map((date) => (
@@ -198,9 +218,10 @@ export default function MoviePage({ movie, auth, showtimes = [] }) {
                   </label>
                   <select
                     value={selectedShowtimeId}
-                    onChange={(event) =>
-                      setSelectedShowtimeId(event.target.value)
-                    }
+                    onChange={(event) => {
+                      setSelectedShowtimeId(event.target.value);
+                      setErrorMessage("");
+                    }}
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none ring-0 focus:border-red-500"
                   >
                     {slotsForSelectedDate.length > 0 ? (
